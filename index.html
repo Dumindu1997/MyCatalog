@@ -186,12 +186,44 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
-        .modal-image {
+        .modal-image-container {
+            position: relative;
             width: 100%;
-            max-height: 300px;
-            object-fit: contain;
+            background-color: #f8f8f8;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
+        }
+        
+        .modal-main-image {
+            width: 100%;
+            height: 300px;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .image-thumbnails {
+            display: flex;
+            padding: 10px;
+            gap: 10px;
+            overflow-x: auto;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .image-thumbnail {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.2s ease;
+        }
+        
+        .image-thumbnail.active {
+            border-color: #007bff;
+            opacity: 1;
         }
         
         .modal-info {
@@ -293,7 +325,12 @@
     <div class="modal" id="productModal">
         <div class="modal-content">
             <span class="close-btn" id="closeModal">&times;</span>
-            <img class="modal-image" id="modalImage" src="" alt="Product Image">
+            <div class="modal-image-container">
+                <img class="modal-main-image" id="modalMainImage" src="" alt="Product Image">
+                <div class="image-thumbnails" id="imageThumbnails">
+                    <!-- Thumbnails will be added here dynamically -->
+                </div>
+            </div>
             <div class="modal-info">
                 <h2 class="modal-name" id="modalName"></h2>
                 <p class="modal-category" id="modalCategory"></p>
@@ -311,7 +348,12 @@
                 name: 'Smartphone X',
                 price: 699.99,
                 category: 'Electronics',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg',
+                    'lap.jpg',
+                    'lap.jpg',
+                    'lap.jpg'
+                ],
                 description: 'The latest smartphone with cutting-edge features including a high-resolution display, powerful processor, and all-day battery life.'
             },
             {
@@ -319,7 +361,11 @@
                 name: 'Laptop Pro',
                 price: 1299.99,
                 category: 'Electronics',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg',
+                    'lap.jpg',
+                    'lap.jpg'
+                ],
                 description: 'Professional-grade laptop with high performance specs, perfect for creative work and multitasking.'
             },
             {
@@ -327,7 +373,10 @@
                 name: 'Wireless Earbuds',
                 price: 149.99,
                 category: 'Electronics',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg',
+                    'lap.jpg'
+                ],
                 description: 'Premium wireless earbuds with noise cancellation and crystal-clear sound quality.'
             },
             {
@@ -335,7 +384,12 @@
                 name: 'Cotton T-Shirt',
                 price: 24.99,
                 category: 'Clothing',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg',
+                    'lap.jpg',
+                    'lap.jpg',
+                    'lap.jpg'
+                ],
                 description: 'Comfortable 100% cotton t-shirt, perfect for everyday wear. Available in multiple colors.'
             },
             {
@@ -343,7 +397,11 @@
                 name: 'Denim Jeans',
                 price: 59.99,
                 category: 'Clothing',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg',
+                    'lap.jpg',
+                    'lap.jpg'
+                ],
                 description: 'Classic denim jeans with a modern fit. Durable and stylish for any casual occasion.'
             },
             {
@@ -351,7 +409,11 @@
                 name: 'Leather Jacket',
                 price: 199.99,
                 category: 'Clothing',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg',
+                    'lap.jpg',
+                    'lap.jpg'
+                ],
                 description: 'Genuine leather jacket with a timeless design. Features a comfortable lining and multiple pockets.'
             },
             {
@@ -359,7 +421,12 @@
                 name: 'Running Shoes',
                 price: 89.99,
                 category: 'Footwear',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg',
+                    'lap.jpg',
+                    'lap.jpg',
+                    'lap.jpg'
+                ],
                 description: 'Lightweight running shoes with responsive cushioning and breathable mesh upper.'
             },
             {
@@ -367,7 +434,10 @@
                 name: 'Casual Sneakers',
                 price: 69.99,
                 category: 'Footwear',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg',
+                    'lap.jpg'
+                ],
                 description: 'Versatile sneakers that combine style and comfort for everyday wear.'
             },
             {
@@ -375,7 +445,10 @@
                 name: 'Blender',
                 price: 79.99,
                 category: 'Home & Kitchen',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg',
+                    'lap.jpg'
+                ],
                 description: 'High-power blender perfect for smoothies, soups, and more. Features multiple speed settings.'
             },
             {
@@ -383,7 +456,9 @@
                 name: 'Coffee Maker',
                 price: 129.99,
                 category: 'Home & Kitchen',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg'
+                ],
                 description: 'Programmable coffee maker with timer function and thermal carafe to keep your coffee hot.'
             },
             {
@@ -391,7 +466,11 @@
                 name: 'Fitness Tracker',
                 price: 99.99,
                 category: 'Fitness',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg',
+                    'lap.jpg',
+                    'lap.jpg'
+                ],
                 description: 'Track your steps, heart rate, sleep quality and more with this comfortable wearable device.'
             },
             {
@@ -399,7 +478,9 @@
                 name: 'Yoga Mat',
                 price: 29.99,
                 category: 'Fitness',
-                image: 'lap.jpg',
+                images: [
+                    'lap.jpg'
+                ],
                 description: 'Non-slip yoga mat with proper cushioning for comfort during all types of exercises.'
             }
         ];
@@ -413,7 +494,8 @@
         const searchInput = document.getElementById('searchInput');
         const modal = document.getElementById('productModal');
         const closeModal = document.getElementById('closeModal');
-        const modalImage = document.getElementById('modalImage');
+        const modalMainImage = document.getElementById('modalMainImage');
+        const imageThumbnails = document.getElementById('imageThumbnails');
         const modalName = document.getElementById('modalName');
         const modalCategory = document.getElementById('modalCategory');
         const modalDescription = document.getElementById('modalDescription');
@@ -486,10 +568,10 @@
                 const productCard = document.createElement('div');
                 productCard.classList.add('product-card');
                 productCard.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <img src="${product.images[0]}" alt="${product.name}" class="product-image">
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
-                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <div class="product-price">${product.price.toFixed(2)}</div>
                         <div class="product-category">${product.category}</div>
                     </div>
                 `;
@@ -505,11 +587,50 @@
         
         // Open product modal
         function openProductModal(product) {
-            modalImage.src = product.image;
+            // Set main image to first image
+            modalMainImage.src = product.images[0];
+            
+            // Clear existing thumbnails
+            imageThumbnails.innerHTML = '';
+            
+            // Create thumbnails for all product images
+            product.images.forEach((imgSrc, index) => {
+                const thumbnail = document.createElement('img');
+                thumbnail.src = imgSrc;
+                thumbnail.alt = `${product.name} image ${index + 1}`;
+                thumbnail.classList.add('image-thumbnail');
+                
+                // Make the first thumbnail active by default
+                if (index === 0) {
+                    thumbnail.classList.add('active');
+                }
+                
+                // Add click event to set main image
+                thumbnail.addEventListener('click', () => {
+                    // Update main image
+                    modalMainImage.src = imgSrc;
+                    
+                    // Update active thumbnail
+                    document.querySelectorAll('.image-thumbnail').forEach(thumb => {
+                        thumb.classList.remove('active');
+                    });
+                    thumbnail.classList.add('active');
+                });
+                
+                imageThumbnails.appendChild(thumbnail);
+            });
+            
+            // If there's only one image, hide the thumbnails section
+            if (product.images.length <= 1) {
+                imageThumbnails.style.display = 'none';
+            } else {
+                imageThumbnails.style.display = 'flex';
+            }
+            
             modalName.textContent = product.name;
             modalCategory.textContent = `Category: ${product.category}`;
             modalDescription.textContent = product.description;
-            modalPrice.textContent = `$${product.price.toFixed(2)}`;
+            modalPrice.textContent = `${product.price.toFixed(2)}`;
             
             modal.style.display = 'flex';
             
