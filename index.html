@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Catalog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a4a4a;
+        }
+        
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 20px;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .search-bar:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0,123,255,0.3);
+        }
+        
+        .categories {
+            display: flex;
+            overflow-x: auto;
+            padding: 15px 10px;
+            background-color: #fff;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .category {
+            padding: 8px 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 20px;
+            background-color: #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        
+        .category.active {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .category:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .category.active:hover {
+            background-color: #0069d9;
+        }
+        
+        .product-container {
+            padding: 10px;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+            padding: 0 10px;
+        }
+        
+        .product-card {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .product-info {
+            padding: 12px;
+        }
+        
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .product-price {
+            color: #007bff;
+            font-weight: bold;
+        }
+        
+        .product-category {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalopen 0.3s;
+        }
+        
+        @keyframes modalopen {
+            from {opacity: 0; transform: scale(0.8);}
+            to {opacity: 1; transform: scale(1);}
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #333;
+            cursor: pointer;
+            background: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .modal-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        
+        .modal-info {
+            padding: 20px;
+        }
+        
+        .modal-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-description {
+            margin-bottom: 15px;
+            color: #555;
+            line-height: 1.4;
+        }
+        
+        .modal-price {
+            font-size: 18px;
+            color: #007bff;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-category {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 15px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+            font-size: 18px;
+        }
+        
+        /* Mobile Specific Styles */
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .navbar {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .logo {
+                margin-bottom: 10px;
+            }
+            
+            .search-container {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+            }
+        }
+        
+        /* Extra Small Screens (400px and below) */
+        @media (max-width: 400px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-card {
+                max-width: 100%;
+            }
+            
+            .product-image {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div class="logo">ShopCatalog</div>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search products..." id="searchInput">
+        </div>
+    </div>
+    
+    <!-- Categories List -->
+    <div class="categories" id="categoriesList">
+        <!-- Categories will be dynamically inserted here -->
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="product-container">
+        <div class="products-grid" id="productsGrid">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+    </div>
+    
+    <!-- Product Detail Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <img class="modal-image" id="modalImage" src="" alt="Product Image">
+            <div class="modal-info">
+                <h2 class="modal-name" id="modalName"></h2>
+                <p class="modal-category" id="modalCategory"></p>
+                <p class="modal-description" id="modalDescription"></p>
+                <p class="modal-price" id="modalPrice"></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sample product data - in a real application, this would come from a database or API
+        const products = [
+            {
+                id: 1,
+                name: 'Smartphone X',
+                price: 699.99,
+                category: 'Electronics',
+                image: 'lap.jpg',
+                description: 'The latest smartphone with cutting-edge features including a high-resolution display, powerful processor, and all-day battery life.'
+            },
+            {
+                id: 2,
+                name: 'Laptop Pro',
+                price: 1299.99,
+                category: 'Electronics',
+                image: 'lap.jpg',
+                description: 'Professional-grade laptop with high performance specs, perfect for creative work and multitasking.'
+            },
+            {
+                id: 3,
+                name: 'Wireless Earbuds',
+                price: 149.99,
+                category: 'Electronics',
+                image: 'lap.jpg',
+                description: 'Premium wireless earbuds with noise cancellation and crystal-clear sound quality.'
+            },
+            {
+                id: 4,
+                name: 'Cotton T-Shirt',
+                price: 24.99,
+                category: 'Clothing',
+                image: 'lap.jpg',
+                description: 'Comfortable 100% cotton t-shirt, perfect for everyday wear. Available in multiple colors.'
+            },
+            {
+                id: 5,
+                name: 'Denim Jeans',
+                price: 59.99,
+                category: 'Clothing',
+                image: 'lap.jpg',
+                description: 'Classic denim jeans with a modern fit. Durable and stylish for any casual occasion.'
+            },
+            {
+                id: 6,
+                name: 'Leather Jacket',
+                price: 199.99,
+                category: 'Clothing',
+                image: 'lap.jpg',
+                description: 'Genuine leather jacket with a timeless design. Features a comfortable lining and multiple pockets.'
+            },
+            {
+                id: 7,
+                name: 'Running Shoes',
+                price: 89.99,
+                category: 'Footwear',
+                image: 'lap.jpg',
+                description: 'Lightweight running shoes with responsive cushioning and breathable mesh upper.'
+            },
+            {
+                id: 8,
+                name: 'Casual Sneakers',
+                price: 69.99,
+                category: 'Footwear',
+                image: 'lap.jpg',
+                description: 'Versatile sneakers that combine style and comfort for everyday wear.'
+            },
+            {
+                id: 9,
+                name: 'Blender',
+                price: 79.99,
+                category: 'Home & Kitchen',
+                image: 'lap.jpg',
+                description: 'High-power blender perfect for smoothies, soups, and more. Features multiple speed settings.'
+            },
+            {
+                id: 10,
+                name: 'Coffee Maker',
+                price: 129.99,
+                category: 'Home & Kitchen',
+                image: 'lap.jpg',
+                description: 'Programmable coffee maker with timer function and thermal carafe to keep your coffee hot.'
+            },
+            {
+                id: 11,
+                name: 'Fitness Tracker',
+                price: 99.99,
+                category: 'Fitness',
+                image: 'lap.jpg',
+                description: 'Track your steps, heart rate, sleep quality and more with this comfortable wearable device.'
+            },
+            {
+                id: 12,
+                name: 'Yoga Mat',
+                price: 29.99,
+                category: 'Fitness',
+                image: 'lap.jpg',
+                description: 'Non-slip yoga mat with proper cushioning for comfort during all types of exercises.'
+            }
+        ];
+
+        // Get all unique categories
+        const categories = ['All', ...new Set(products.map(product => product.category))];
+        
+        // DOM elements
+        const categoriesList = document.getElementById('categoriesList');
+        const productsGrid = document.getElementById('productsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const modal = document.getElementById('productModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalName = document.getElementById('modalName');
+        const modalCategory = document.getElementById('modalCategory');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalPrice = document.getElementById('modalPrice');
+        
+        // Populate categories
+        function populateCategories() {
+            categoriesList.innerHTML = '';
+            categories.forEach(category => {
+                const categoryElement = document.createElement('div');
+                categoryElement.classList.add('category');
+                if (category === 'All') {
+                    categoryElement.classList.add('active');
+                }
+                categoryElement.textContent = category;
+                categoryElement.addEventListener('click', () => {
+                    // Remove active class from all categories
+                    document.querySelectorAll('.category').forEach(cat => {
+                        cat.classList.remove('active');
+                    });
+                    // Add active class to clicked category
+                    categoryElement.classList.add('active');
+                    // Filter products by category
+                    filterProducts();
+                });
+                categoriesList.appendChild(categoryElement);
+            });
+        }
+        
+        // Filter products based on search input and selected category
+        function filterProducts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedCategory = document.querySelector('.category.active').textContent;
+            
+            // Show/hide categories based on search
+            categoriesList.style.display = searchTerm ? 'none' : 'flex';
+            
+            let filteredProducts;
+            
+            if (searchTerm) {
+                // If searching, ignore categories
+                filteredProducts = products.filter(product => 
+                    product.name.toLowerCase().includes(searchTerm) ||
+                    product.description.toLowerCase().includes(searchTerm) ||
+                    product.category.toLowerCase().includes(searchTerm)
+                );
+            } else {
+                // If not searching, filter by selected category
+                filteredProducts = selectedCategory === 'All' 
+                    ? products 
+                    : products.filter(product => product.category === selectedCategory);
+            }
+            
+            displayProducts(filteredProducts);
+        }
+        
+        // Display products in the grid
+        function displayProducts(productsToDisplay) {
+            productsGrid.innerHTML = '';
+            
+            if (productsToDisplay.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.classList.add('no-results');
+                noResults.textContent = 'No products found';
+                productsGrid.appendChild(noResults);
+                return;
+            }
+            
+            productsToDisplay.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <div class="product-category">${product.category}</div>
+                    </div>
+                `;
+                
+                // Open modal on click
+                productCard.addEventListener('click', () => {
+                    openProductModal(product);
+                });
+                
+                productsGrid.appendChild(productCard);
+            });
+        }
+        
+        // Open product modal
+        function openProductModal(product) {
+            modalImage.src = product.image;
+            modalName.textContent = product.name;
+            modalCategory.textContent = `Category: ${product.category}`;
+            modalDescription.textContent = product.description;
+            modalPrice.textContent = `$${product.price.toFixed(2)}`;
+            
+            modal.style.display = 'flex';
+            
+            // Prevent body scrolling when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Close modal
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Search input event
+        searchInput.addEventListener('input', filterProducts);
+        
+        // Initialize page
+        function init() {
+            populateCategories();
+            filterProducts();
+        }
+        
+        // Start the app
+        init();
+    </script>
+</body>
+</html>
